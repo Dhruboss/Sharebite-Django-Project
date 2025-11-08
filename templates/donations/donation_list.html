@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Your Donations</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Donations Made</h4>
+            {% for donation in donations_made %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>{{ donation.food_item.title }}</h5>
+                    <p>To: {{ donation.receiver.username }}</p>
+                    <span class="badge bg-{% if donation.status == 'completed' %}success{% elif donation.status == 'accepted' %}warning{% else %}secondary{% endif %}">
+                        {{ donation.status }}
+                    </span>
+                </div>
+            </div>
+            {% empty %}
+            <p>No donations made yet.</p>
+            {% endfor %}
+        </div>
+        
+        <div class="col-md-6">
+            <h4>Donations Received</h4>
+            {% for donation in donations_received %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>{{ donation.food_item.title }}</h5>
+                    <p>From: {{ donation.donor.username }}</p>
+                    <span class="badge bg-{% if donation.status == 'completed' %}success{% elif donation.status == 'accepted' %}warning{% else %}secondary{% endif %}">
+                        {{ donation.status }}
+                    </span>
+                </div>
+            </div>
+            {% empty %}
+            <p>No donations received yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4">Share Food. Save Planet.</h1>
+        <p class="lead">Connect surplus food with people who need it. Reduce waste, build community.</p>
+        {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}" class="btn btn-light btn-lg me-2">Join Now</a>
+            <a href="{% url 'food_list' %}" class="btn btn-outline-light btn-lg">Browse Food</a>
+        {% else %}
+            <a href="{% url 'food_create' %}" class="btn btn-light btn-lg me-2">Share Food</a>
+            <a href="{% url 'food_list' %}" class="btn btn-outline-light btn-lg">Find Food</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <h3>Reduce Waste</h3>
+            <p>Save perfectly good food from landfills</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Help Community</h3>
+            <p>Connect surplus food with those in need</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Track Impact</h3>
+            <p>See your environmental contribution</p>
+        </div>
+    </div>
+
+    <!-- Comment out recent food section for now -->
+    {% comment %}
+    {% if recent_food %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2>Recently Available Food</h2>
+            <div class="row">
+                {% for food in recent_food %}
+                <div class="col-md-3 mb-4">
+                    <div class="card food-card h-100">
+                        <img src="{{ food.image.url }}" class="card-img-top" alt="{{ food.title }}" style="height: 150px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ food.title }}</h5>
+                            <p class="card-text">{{ food.description|truncatewords:10 }}</p>
+                            <small class="text-muted">Expires in {{ food.days_until_expiry }} days</small>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'food_detail' food.pk %}" class="btn btn-sm btn-success">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endcomment %}
+</div>
+{% endblock %}

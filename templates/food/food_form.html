@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section-small">
+    <div class="container">
+        <h1 class="display-5">{{ title|default:"Share Your Surplus Food" }}</h1>
+        <p class="lead">Help reduce waste and feed your community</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                                Food Title <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="title" class="form-control" id="{{ form.title.id_for_label }}" 
+                                   placeholder="e.g., Fresh Vegetable Soup" value="{{ form.title.value|default:'' }}" required>
+                            {% for error in form.title.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                Description <span class="text-danger">*</span>
+                            </label>
+                            <textarea name="description" class="form-control" id="{{ form.description.id_for_label }}" 
+                                      rows="4" placeholder="Describe the food, ingredients, preparation method, etc." required>{{ form.description.value|default:'' }}</textarea>
+                            {% for error in form.description.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">
+                                    Category
+                                </label>
+                                <select name="category" class="form-select" id="{{ form.category.id_for_label }}">
+                                    <option value="">Select a category</option>
+                                    {% for category in form.category.field.queryset %}
+                                        <option value="{{ category.id }}" {% if form.category.value == category.id %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% for error in form.category.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.quantity.id_for_label }}" class="form-label fw-bold">
+                                    Quantity (kg) <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" name="quantity" step="0.1" class="form-control" 
+                                       id="{{ form.quantity.id_for_label }}" placeholder="e.g., 2.5" 
+                                       value="{{ form.quantity.value|default:'' }}" required>
+                                {% for error in form.quantity.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.expiry_date.id_for_label }}" class="form-label fw-bold">
+                                    Expiry Date & Time <span class="text-danger">*</span>
+                                </label>
+                                <input type="datetime-local" name="expiry_date" class="form-control" 
+                                       id="{{ form.expiry_date.id_for_label }}" value="{{ form.expiry_date.value|default:'' }}" required>
+                                <small class="form-text text-muted">When does this food expire or need to be consumed by?</small>
+                                {% for error in form.expiry_date.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.dietary_tags.id_for_label }}" class="form-label fw-bold">
+                                    Dietary Tags
+                                </label>
+                                <select name="dietary_tags" class="form-select" id="{{ form.dietary_tags.id_for_label }}">
+                                    <option value="">None</option>
+                                    {% for value, label in form.dietary_tags.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" {% if form.dietary_tags.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% for error in form.dietary_tags.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">
+                                Food Image <span class="text-danger">*</span>
+                            </label>
+                            <input type="file" name="image" class="form-control" id="{{ form.image.id_for_label }}" 
+                                   accept="image/*" required>
+                            <small class="form-text text-muted">Upload a clear photo of the food item</small>
+                            {% for error in form.image.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.pickup_location.id_for_label }}" class="form-label fw-bold">
+                                Pickup Location <span class="text-danger">*</span>
+                            </label>
+                            <textarea name="pickup_location" class="form-control" id="{{ form.pickup_location.id_for_label }}" 
+                                      rows="3" placeholder="Enter the address or location where food can be picked up" required>{{ form.pickup_location.value|default:'' }}</textarea>
+                            {% for error in form.pickup_location.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.instructions.id_for_label }}" class="form-label fw-bold">
+                                Special Instructions
+                            </label>
+                            <textarea name="instructions" class="form-control" id="{{ form.instructions.id_for_label }}" 
+                                      rows="3" placeholder="Any special handling, storage, or pickup instructions (optional)">{{ form.instructions.value|default:'' }}</textarea>
+                            {% for error in form.instructions.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="alert alert-success" role="alert">
+                            <strong>Thank you for sharing!</strong> Your contribution helps reduce food waste and supports the community.
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Share Food</button>
+                            <a href="{% url 'food_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section-small {
+        background: linear-gradient(135deg, #2e8b57, #3cb371);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+

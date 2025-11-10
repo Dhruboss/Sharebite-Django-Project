@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section-small">
+    <div class="container">
+        <h1 class="display-5">Browse Available Food</h1>
+        <p class="lead">Find fresh, surplus food shared by your community</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Search & Filter</h5>
+                    <form method="GET" action="{% url 'food_list' %}">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                {{ form.query }}
+                            </div>
+                            <div class="col-md-3">
+                                <select name="category" class="form-select">
+                                    <option value="">All Categories</option>
+                                    {% for category in form.category.field.queryset %}
+                                        <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="dietary_tags" class="form-select">
+                                    <option value="">All Dietary Tags</option>
+                                    {% for value, label in form.dietary_tags.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" {% if request.GET.dietary_tags == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-success w-100">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if food_items %}
+            {% for food in food_items %}
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card food-card h-100 shadow-sm">
+                        {% if food.image %}
+                            <img src="{{ food.image.url }}" class="card-img-top" alt="{{ food.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <span class="text-muted">No image</span>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ food.title }}</h5>
+                            <p class="card-text text-muted small flex-grow-1">{{ food.description|truncatewords:15 }}</p>
+                            
+                            <div class="mb-2">
+                                {% if food.dietary_tags %}
+                                    <span class="badge bg-info">{{ food.get_dietary_tags_display }}</span>
+                                {% endif %}
+                                <span class="badge bg-secondary">{{ food.quantity }} kg</span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">
+                                    <i class="bi bi-person"></i> {{ food.donor.username }}
+                                </small>
+                                <small class="{% if food.days_until_expiry <= 1 %}text-danger{% elif food.days_until_expiry <= 3 %}text-warning{% else %}text-success{% endif %}">
+                                    {% if food.days_until_expiry > 0 %}
+                                        {{ food.days_until_expiry }} day{{ food.days_until_expiry|pluralize }} left
+                                    {% else %}
+                                        Expires soon
+                                    {% endif %}
+                                </small>
+                            </div>
+                            
+                            <a href="{% url 'food_detail' food.pk %}" class="btn btn-success btn-sm w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    <h4>No food items found</h4>
+                    <p class="mb-0">Try adjusting your search filters or check back later for new listings.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .hero-section-small {
+        background: linear-gradient(135deg, #2e8b57, #3cb371);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 0;
+    }
+    
+    .food-card {
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .food-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 20px rgba(46, 139, 87, 0.2);
+    }
+</style>
+{% endblock %}
+

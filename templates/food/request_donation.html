@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Request Food Donation</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {% if food_item.image %}
+                                <img src="{{ food_item.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ food_item.title }}">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <span class="text-muted">No image</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <h3 class="mb-3">{{ food_item.title }}</h3>
+                            <p class="text-muted">{{ food_item.description|truncatewords:30 }}</p>
+                            
+                            <div class="mb-3">
+                                <strong>Quantity:</strong> {{ food_item.quantity }} kg<br>
+                                <strong>Expires:</strong> 
+                                <span class="{% if food_item.days_until_expiry <= 1 %}text-danger{% elif food_item.days_until_expiry <= 3 %}text-warning{% else %}text-success{% endif %}">
+                                    {{ food_item.expiry_date|date:"M d, Y - H:i" }}
+                                </span>
+                                <br>
+                                <strong>Donor:</strong> {{ food_item.donor.username }}
+                                <br>
+                                <strong>Pickup Location:</strong> {{ food_item.pickup_location|truncatewords:10 }}
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <strong>Environmental Impact:</strong><br>
+                                By claiming this food, you will help save approximately 
+                                <strong>{{ food_item.calculate_carbon_saving|floatformat:2 }} kg of CO₂</strong> 
+                                from being released into the atmosphere.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h5 class="mb-3">Confirm Your Request</h5>
+                    <p>By requesting this food, you agree to:</p>
+                    <ul>
+                        <li>Pick up the food at the specified location</li>
+                        <li>Coordinate with the donor for pickup time</li>
+                        <li>Handle the food safely and consume it before expiry</li>
+                        <li>Provide feedback after completing the donation</li>
+                    </ul>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Confirm Request</button>
+                            <a href="{% url 'food_detail' food_item.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

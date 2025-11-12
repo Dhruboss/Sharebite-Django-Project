@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section-small">
+    <div class="container">
+        <h1 class="display-5">Contact Us</h1>
+        <p class="lead">We'd love to hear from you</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto mb-5">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-success mb-4">Get in Touch</h2>
+                    <p class="text-muted mb-4">
+                        Have questions, suggestions, or feedback? We're here to help! 
+                        Fill out the form below and we'll get back to you as soon as possible.
+                    </p>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="name" class="form-label fw-bold">Your Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" id="name" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="email" class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
+                            <input type="email" name="email" id="email" class="form-control" placeholder="your.email@example.com" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="subject" class="form-label fw-bold">Subject <span class="text-danger">*</span></label>
+                            <select name="subject" id="subject" class="form-select" required>
+                                <option value="">Select a subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="support">Technical Support</option>
+                                <option value="partnership">Partnership Opportunity</option>
+                                <option value="report">Report an Issue</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="message" class="form-label fw-bold">Message <span class="text-danger">*</span></label>
+                            <textarea name="message" id="message" class="form-control" rows="6" placeholder="Tell us what's on your mind..." required></textarea>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body p-4">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3" 
+                         style="width: 80px; height: 80px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                        </svg>
+                    </div>
+                    <h5 class="card-title text-success">Email</h5>
+                    <p class="text-muted">info@sharebite.com</p>
+                    <p class="text-muted">support@sharebite.com</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body p-4">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3" 
+                         style="width: 80px; height: 80px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        </svg>
+                    </div>
+                    <h5 class="card-title text-success">Location</h5>
+                    <p class="text-muted">University of Windsor</p>
+                    <p class="text-muted">Windsor, Ontario, Canada</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body p-4">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3" 
+                         style="width: 80px; height: 80px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                        </svg>
+                    </div>
+                    <h5 class="card-title text-success">Response Time</h5>
+                    <p class="text-muted">We typically respond within</p>
+                    <p class="text-muted"><strong>24-48 hours</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow bg-light">
+                <div class="card-body p-5 text-center">
+                    <h3 class="text-success mb-3">Frequently Asked Questions</h3>
+                    <p class="mb-4">Before contacting us, you might find answers to common questions below:</p>
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    How do I share food on Sharebite?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-start">
+                                    After registering and logging in, click "Share Food" in the navigation menu. Fill in the details about your surplus food, upload a photo, and submit. Your food will be visible to the community!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    How are points and badges calculated?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-start">
+                                    You earn 10 points per kilogram of food you donate, and 5 points for receiving food. Badges are awarded based on your total points and contributions to the community.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Is Sharebite free to use?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-start">
+                                    Yes! Sharebite is completely free for all users. Our mission is to reduce food waste and help communities, not to make a profit.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section-small {
+        background: linear-gradient(135deg, #2e8b57, #3cb371);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+

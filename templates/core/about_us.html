@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section-small">
+    <div class="container">
+        <h1 class="display-5">About Sharebite</h1>
+        <p class="lead">Fighting food waste, one meal at a time</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-success mb-4">Our Mission</h2>
+                    <p class="lead">
+                        Sharebite is a community-driven platform dedicated to reducing food waste and fighting hunger. 
+                        We connect people, restaurants, and organizations who have surplus food with those who need it.
+                    </p>
+                    <p>
+                        Nearly one-third of all food produced worldwide is wasted annually, while millions struggle 
+                        with food insecurity. Sharebite provides a solution by creating a seamless connection between 
+                        food donors and receivers, tracking environmental impact, and promoting sustainable living.
+                    </p>
+                    
+                    <hr class="my-4">
+                    
+                    <h3 class="text-success mb-3">Our Impact</h3>
+                    <div class="row text-center mb-4">
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4 class="text-success">2.5 kg</h4>
+                                <p class="text-muted mb-0">CO₂ saved per kg of food</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4 class="text-success">100%</h4>
+                                <p class="text-muted mb-0">Community driven</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4 class="text-success">Zero</h4>
+                                <p class="text-muted mb-0">Food waste goal</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h3 class="text-success mb-3">Key Features</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><span class="text-success">✓</span> Share surplus food with your community</li>
+                        <li class="mb-2"><span class="text-success">✓</span> Track your environmental impact</li>
+                        <li class="mb-2"><span class="text-success">✓</span> Earn points and badges for contributions</li>
+                        <li class="mb-2"><span class="text-success">✓</span> Discover eco-friendly recipes</li>
+                        <li class="mb-2"><span class="text-success">✓</span> Connect with local food banks and NGOs</li>
+                        <li class="mb-2"><span class="text-success">✓</span> Smart expiry alerts to prevent waste</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center text-success mb-4">Meet Our Team</h2>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        {% for member in team_members %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm team-card">
+                    <div class="card-body text-center p-4">
+                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3 shadow" 
+                             style="width: 100px; height: 100px;">
+                            <span style="font-size: 2.5rem;">{{ member.name|first|upper }}</span>
+                        </div>
+                        <h5 class="card-title">{{ member.name }}</h5>
+                        <p class="text-success fw-bold">{{ member.role }}</p>
+                        <p class="text-muted small">{{ member.responsibilities }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow bg-success text-white">
+                <div class="card-body text-center p-5">
+                    <h3 class="mb-3">Academic Project</h3>
+                    <p class="mb-2"><strong>University:</strong> {{ university }}</p>
+                    <p class="mb-2"><strong>Course:</strong> {{ course }}</p>
+                    <p class="mb-0"><strong>Year:</strong> 2024-2025</p>
+                    <hr class="my-4 bg-white">
+                    <p class="mb-0">
+                        This project was developed as part of our coursework to demonstrate 
+                        Django web development skills while addressing real-world environmental challenges.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h3 class="text-success mb-4">Join Our Mission</h3>
+            <p class="lead mb-4">Together, we can reduce food waste and create a more sustainable future.</p>
+            <div>
+                <a href="{% url 'register' %}" class="btn btn-success btn-lg me-2">Get Started</a>
+                <a href="{% url 'contact_us' %}" class="btn btn-outline-success btn-lg">Contact Us</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section-small {
+        background: linear-gradient(135deg, #2e8b57, #3cb371);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 0;
+    }
+    
+    .team-card {
+        transition: all 0.3s ease;
+    }
+    
+    .team-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(46, 139, 87, 0.3);
+    }
+</style>
+{% endblock %}
+

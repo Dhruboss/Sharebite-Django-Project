@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Welcome to Your Dashboard, {{ user.username }}!</h2>
+            <p class="text-muted">Here's your food sharing activity and impact.</p>
+        </div>
+    </div>
+    
+    {% if has_expiry_alerts %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-warning shadow-sm" role="alert">
+                <h5 class="alert-heading">Expiry Alerts</h5>
+                <p class="mb-2">
+                    {% if expiring_today > 0 %}
+                        <strong>{{ expiring_today }}</strong> food item{{ expiring_today|pluralize }} expiring today!
+                    {% endif %}
+                    {% if expiring_this_week > 0 %}
+                        <strong>{{ expiring_this_week }}</strong> item{{ expiring_this_week|pluralize }} expiring this week.
+                    {% endif %}
+                </p>
+                {% if expiring_items %}
+                    <hr>
+                    <p class="mb-2"><strong>Items expiring soon:</strong></p>
+                    <ul class="mb-0">
+                        {% for item in expiring_items|slice:":3" %}
+                            <li>
+                                <strong>{{ item.title }}</strong> - Expires in {{ item.days_until_expiry }} day{{ item.days_until_expiry|pluralize }}
+                                <a href="{% url 'food_detail' item.pk %}" class="alert-link">(View)</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="impact-stats text-center shadow">
+                <h3 class="text-success mb-4">Your Impact</h3>
+                <div class="mb-4">
+                    <div class="progress-circle mx-auto mb-3" style="width: 120px; height: 120px; background: conic-gradient(#2e8b57 0% {% widthratio user.food_saved 100 100 %}%, #e0e0e0 {% widthratio user.food_saved 100 100 %}% 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 100px; height: 100px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                            <h4 class="text-success mb-0">{{ user.food_saved|default:0|floatformat:1 }}</h4>
+                            <small class="text-muted">kg</small>
+                        </div>
+                    </div>
+                    <p class="fw-bold">Food Saved</p>
+                </div>
+                <div class="mb-4">
+                    <div class="progress-circle mx-auto mb-3" style="width: 120px; height: 120px; background: conic-gradient(#3cb371 0% {% widthratio user.carbon_saved 250 100 %}%, #e0e0e0 {% widthratio user.carbon_saved 250 100 %}% 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 100px; height: 100px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                            <h4 class="text-success mb-0">{{ user.carbon_saved|default:0|floatformat:1 }}</h4>
+                            <small class="text-muted">kg CO₂</small>
+                        </div>
+                    </div>
+                    <p class="fw-bold">CO₂ Prevented</p>
+                </div>
+                <div>
+                    <h4 class="text-success display-4">{{ user.points|default:0 }}</h4>
+                    <p class="fw-bold">Points Earned</p>
+                </div>
+                <div class="mt-4 p-3 bg-light rounded">
+                    <small class="text-muted">Session Visits: {{ visit_count }}</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm border-success">
+                        <div class="card-body">
+                            <h3 class="text-success">{{ total_donations_made }}</h3>
+                            <p class="text-muted small mb-0">Total Donations</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm border-success">
+                        <div class="card-body">
+                            <h3 class="text-success">{{ completed_donations }}</h3>
+                            <p class="text-muted small mb-0">Completed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm border-success">
+                        <div class="card-body">
+                            <h3 class="text-success">{{ total_food_shared }}</h3>
+                            <p class="text-muted small mb-0">Food Items</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm border-success">
+                        <div class="card-body">
+                            <h3 class="text-success">{{ available_food }}</h3>
+                            <p class="text-muted small mb-0">Available</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Donations Made</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for donation in user_donations %}
+                            <div class="mb-3 p-2 border rounded">
+                                <h6>{{ donation.food_item.title }}</h6>
+                                <small class="text-muted">To: {{ donation.receiver.username }}</small><br>
+                                <span class="badge bg-{% if donation.status == 'completed' %}success{% elif donation.status == 'accepted' %}warning{% else %}secondary{% endif %}">
+                                    {{ donation.status }}
+                                </span>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">No donations made yet.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Donations Received</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for donation in user_received %}
+                            <div class="mb-3 p-2 border rounded">
+                                <h6>{{ donation.food_item.title }}</h6>
+                                <small class="text-muted">From: {{ donation.donor.username }}</small><br>
+                                <span class="badge bg-{% if donation.status == 'completed' %}success{% elif donation.status == 'accepted' %}warning{% else %}secondary{% endif %}">
+                                    {{ donation.status }}
+                                </span>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">No received donations yet.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <a href="{% url 'food_create' %}" class="btn btn-success me-2 mb-2">Share Food</a>
+                            <a href="{% url 'food_list' %}" class="btn btn-outline-success me-2 mb-2">Browse Food</a>
+                            <a href="{% url 'recipe_list' %}" class="btn btn-outline-success me-2 mb-2">View Recipes</a>
+                            <a href="{% url 'leaderboard' %}" class="btn btn-outline-success me-2 mb-2">Leaderboard</a>
+                            <a href="{% url 'profile' %}" class="btn btn-outline-success mb-2">Update Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .impact-stats {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        padding: 2rem;
+    }
+    
+    .progress-circle {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}

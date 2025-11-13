@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section-small">
+    <div class="container">
+        <h1 class="display-5">My Profile</h1>
+        <p class="lead">Manage your account settings and view your impact</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" class="rounded-circle mb-3 shadow" 
+                             style="width: 150px; height: 150px; object-fit: cover;" alt="{{ user.username }}">
+                    {% else %}
+                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-3 shadow" 
+                             style="width: 150px; height: 150px;">
+                            <span style="font-size: 3rem;">{{ user.username|first|upper }}</span>
+                        </div>
+                    {% endif %}
+                    
+                    <h4>{{ user.username }}</h4>
+                    <p class="text-muted">{{ user.get_user_type_display }}</p>
+                    <span class="badge bg-success fs-6">{{ user.points }} Points</span>
+                </div>
+            </div>
+            
+            <div class="card shadow mt-4">
+                <div class="card-body">
+                    <h5 class="card-title text-success mb-3">Your Impact</h5>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Food Saved</span>
+                            <strong class="text-success">{{ user.food_saved|floatformat:1 }} kg</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {% widthratio user.food_saved 100 100 %}%" 
+                                 aria-valuenow="{{ user.food_saved }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">CO₂ Prevented</span>
+                            <strong class="text-success">{{ user.carbon_saved|floatformat:1 }} kg</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {% widthratio user.carbon_saved 250 100 %}%" 
+                                 aria-valuenow="{{ user.carbon_saved }}" aria-valuemin="0" aria-valuemax="250"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4 p-3 bg-light rounded">
+                        <small class="text-muted">You've made a difference!</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Edit Profile</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.username.id_for_label }}" class="form-label fw-bold">
+                                    Username
+                                </label>
+                                <input type="text" name="username" class="form-control" 
+                                       id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:user.username }}">
+                                {% for error in form.username.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">
+                                    Email
+                                </label>
+                                <input type="email" name="email" class="form-control" 
+                                       id="{{ form.email.id_for_label }}" value="{{ form.email.value|default:user.email }}">
+                                {% for error in form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label fw-bold">
+                                Phone Number
+                            </label>
+                            <input type="text" name="phone_number" class="form-control" 
+                                   id="{{ form.phone_number.id_for_label }}" 
+                                   value="{{ form.phone_number.value|default:user.phone_number }}"
+                                   placeholder="e.g., +1234567890">
+                            {% for error in form.phone_number.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.address.id_for_label }}" class="form-label fw-bold">
+                                Address
+                            </label>
+                            <textarea name="address" class="form-control" id="{{ form.address.id_for_label }}" 
+                                      rows="3" placeholder="Your address">{{ form.address.value|default:user.address }}</textarea>
+                            {% for error in form.address.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.bio.id_for_label }}" class="form-label fw-bold">
+                                Bio
+                            </label>
+                            <textarea name="bio" class="form-control" id="{{ form.bio.id_for_label }}" 
+                                      rows="3" placeholder="Tell us about yourself and why you're passionate about reducing food waste">{{ form.bio.value|default:user.bio }}</textarea>
+                            {% for error in form.bio.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.profile_picture.id_for_label }}" class="form-label fw-bold">
+                                Profile Picture
+                            </label>
+                            <input type="file" name="profile_picture" class="form-control" 
+                                   id="{{ form.profile_picture.id_for_label }}" accept="image/*">
+                            <small class="form-text text-muted">Upload a profile picture (optional)</small>
+                            {% for error in form.profile_picture.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Update Profile</button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card shadow mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Account Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Account Type:</strong> {{ user.get_user_type_display }}</p>
+                            <p class="mb-2"><strong>Member Since:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Total Points:</strong> {{ user.points }}</p>
+                            <p class="mb-2"><strong>Last Login:</strong> {{ user.last_login|date:"M d, Y - H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section-small {
+        background: linear-gradient(135deg, #2e8b57, #3cb371);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+

@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Donation Details</h4>
+                        <span class="badge bg-{% if donation.status == 'completed' %}light text-success{% elif donation.status == 'accepted' %}warning{% elif donation.status == 'cancelled' %}danger{% else %}secondary{% endif %} fs-6">
+                            {{ donation.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {% if donation.food_item.image %}
+                                <img src="{{ donation.food_item.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ donation.food_item.title }}">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 250px;">
+                                    <span class="text-muted">No image</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <h3 class="mb-3">{{ donation.food_item.title }}</h3>
+                            <p class="text-muted">{{ donation.food_item.description }}</p>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="text-success mb-2">Donor</h6>
+                                            <p class="mb-0"><strong>{{ donation.donor.username }}</strong></p>
+                                            <small class="text-muted">{{ donation.donor.get_user_type_display }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="text-success mb-2">Receiver</h6>
+                                            <p class="mb-0"><strong>{{ donation.receiver.username }}</strong></p>
+                                            <small class="text-muted">{{ donation.receiver.get_user_type_display }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card border-success mb-3">
+                                <div class="card-body">
+                                    <h6 class="text-success mb-3">Food Details</h6>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <small class="text-muted">Quantity</small>
+                                            <p class="mb-2"><strong>{{ donation.food_item.quantity }} kg</strong></p>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Expiry Date</small>
+                                            <p class="mb-2"><strong>{{ donation.food_item.expiry_date|date:"M d, Y" }}</strong></p>
+                                        </div>
+                                        <div class="col-12">
+                                            <small class="text-muted">Pickup Location</small>
+                                            <p class="mb-0">{{ donation.food_item.pickup_location }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <h6 class="mb-2">Environmental Impact</h6>
+                                    <p class="mb-0">
+                                        <strong>CO₂ Saved:</strong> {{ donation.food_item.calculate_carbon_saving|floatformat:2 }} kg
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-success mb-3">Timeline</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <strong>Requested:</strong> {{ donation.requested_at|date:"M d, Y - H:i" }}
+                                </li>
+                                {% if donation.accepted_at %}
+                                    <li class="mb-2">
+                                        <strong>Accepted:</strong> {{ donation.accepted_at|date:"M d, Y - H:i" }}
+                                    </li>
+                                {% endif %}
+                                {% if donation.completed_at %}
+                                    <li class="mb-2">
+                                        <strong>Completed:</strong> {{ donation.completed_at|date:"M d, Y - H:i" }}
+                                    </li>
+                                {% endif %}
+                                {% if donation.pickup_time %}
+                                    <li class="mb-2">
+                                        <strong>Scheduled Pickup:</strong> {{ donation.pickup_time|date:"M d, Y - H:i" }}
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            {% if donation.feedback %}
+                                <h6 class="text-success mb-3">Feedback</h6>
+                                <p class="text-muted">{{ donation.feedback }}</p>
+                                {% if donation.rating %}
+                                    <div class="mb-2">
+                                        <strong>Rating:</strong>
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= donation.rating %}
+                                                <span class="text-warning">★</span>
+                                            {% else %}
+                                                <span class="text-muted">☆</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            
+                            {% if user == donation.donor and donation.status == 'pending' %}
+                                <form method="POST" action="{% url 'accept_donation' donation.id %}" class="mb-2">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success w-100">Accept Request</button>
+                                </form>
+                            {% endif %}
+                            
+                            {% if user == donation.donor and donation.status == 'accepted' %}
+                                <form method="POST" action="{% url 'complete_donation' donation.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success w-100">Mark as Completed</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'donation_list' %}" class="btn btn-outline-success">Back to Donations</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            {% if recipe.image %}
+                <img src="{{ recipe.image.url }}" class="img-fluid rounded shadow" alt="{{ recipe.title }}" style="width: 100%; max-height: 500px; object-fit: cover;">
+            {% else %}
+                <div class="bg-light rounded shadow d-flex align-items-center justify-content-center" style="width: 100%; height: 400px;">
+                    <span class="text-muted" style="font-size: 5rem;">🍽️</span>
+                </div>
+            {% endif %}
+            
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h1 class="display-6 mb-2">{{ recipe.title }}</h1>
+                        <p class="text-muted">By {{ recipe.author.username }} | {{ recipe.created_at|date:"M d, Y" }}</p>
+                    </div>
+                    {% if user.is_authenticated %}
+                        <form method="POST" action="{% url 'toggle_favorite' recipe.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-{% if is_favorited %}warning{% else %}outline-warning{% endif %}">
+                                {% if is_favorited %}❤️ Favorited{% else %}🤍 Favorite{% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+                
+                <p class="lead">{{ recipe.description }}</p>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center bg-light">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-1">Prep Time</h6>
+                                <p class="mb-0 fs-5">{{ recipe.prep_time }} min</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-light">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-1">Cook Time</h6>
+                                <p class="mb-0 fs-5">{{ recipe.cook_time }} min</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-light">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-1">Servings</h6>
+                                <p class="mb-0 fs-5">{{ recipe.servings }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-light">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-1">Difficulty</h6>
+                                <p class="mb-0 fs-5">{{ recipe.get_difficulty_display }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if recipe.waste_reduction_tip %}
+                    <div class="alert alert-success" role="alert">
+                        <h6 class="alert-heading">Waste Reduction Tip</h6>
+                        <p class="mb-0">{{ recipe.waste_reduction_tip }}</p>
+                    </div>
+                {% endif %}
+                
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Ingredients</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            {% for ingredient in ingredients_list %}
+                                {% if ingredient.strip %}
+                                    <li class="mb-2">
+                                        <span class="text-success me-2">✓</span>{{ ingredient }}
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Instructions</h5>
+                    </div>
+                    <div class="card-body">
+                        <ol class="ps-3">
+                            {% for instruction in instructions_list %}
+                                {% if instruction.strip %}
+                                    <li class="mb-3">{{ instruction }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5 class="card-title text-success mb-3">Recipe Details</h5>
+                    <div class="mb-3">
+                        <strong>Total Time:</strong>
+                        <p class="text-muted mb-0">{{ recipe.total_time }} minutes</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Difficulty:</strong>
+                        <p class="mb-0">
+                            <span class="badge bg-{% if recipe.difficulty == 'easy' %}success{% elif recipe.difficulty == 'medium' %}warning{% else %}danger{% endif %}">
+                                {{ recipe.get_difficulty_display }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Leftover Friendly:</strong>
+                        <p class="mb-0">
+                            {% if recipe.leftover_friendly %}
+                                <span class="badge bg-success">Yes</span>
+                            {% else %}
+                                <span class="badge bg-secondary">No</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <strong>Views:</strong>
+                        <p class="text-muted mb-0">{{ recipe.views }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-body text-center">
+                    <h6 class="text-success mb-3">Share this recipe</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'recipe_list' %}" class="btn btn-outline-success">Browse More Recipes</a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'recipe_create' %}" class="btn btn-success">Share Your Recipe</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow bg-light">
+                <div class="card-body">
+                    <h6 class="text-success mb-2">About the Author</h6>
+                    <div class="d-flex align-items-center">
+                        {% if recipe.author.profile_picture %}
+                            <img src="{{ recipe.author.profile_picture.url }}" class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;" alt="{{ recipe.author.username }}">
+                        {% else %}
+                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2" style="width: 50px; height: 50px;">
+                                <span class="fs-5">{{ recipe.author.username|first|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <p class="mb-0 fw-bold">{{ recipe.author.username }}</p>
+                            <small class="text-muted">{{ recipe.author.get_user_type_display }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

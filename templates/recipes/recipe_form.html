@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section-small">
+    <div class="container">
+        <h1 class="display-5">{{ title|default:"Share Your Recipe" }}</h1>
+        <p class="lead">Help others reduce food waste with your creative recipes</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                                Recipe Title <span class="text-danger">*</span>
+                            </label>
+                            {{ form.title }}
+                            {% for error in form.title.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                Description <span class="text-danger">*</span>
+                            </label>
+                            {{ form.description }}
+                            <small class="form-text text-muted">Brief description of your recipe</small>
+                            {% for error in form.description.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="{{ form.prep_time.id_for_label }}" class="form-label fw-bold">
+                                    Prep Time (min) <span class="text-danger">*</span>
+                                </label>
+                                {{ form.prep_time }}
+                                {% for error in form.prep_time.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.cook_time.id_for_label }}" class="form-label fw-bold">
+                                    Cook Time (min) <span class="text-danger">*</span>
+                                </label>
+                                {{ form.cook_time }}
+                                {% for error in form.cook_time.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.servings.id_for_label }}" class="form-label fw-bold">
+                                    Servings <span class="text-danger">*</span>
+                                </label>
+                                {{ form.servings }}
+                                {% for error in form.servings.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.difficulty.id_for_label }}" class="form-label fw-bold">
+                                    Difficulty <span class="text-danger">*</span>
+                                </label>
+                                {{ form.difficulty }}
+                                {% for error in form.difficulty.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">
+                                    Recipe Image
+                                </label>
+                                {{ form.image }}
+                                {% for error in form.image.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.ingredients.id_for_label }}" class="form-label fw-bold">
+                                Ingredients <span class="text-danger">*</span>
+                            </label>
+                            {{ form.ingredients }}
+                            <small class="form-text text-muted">List each ingredient on a new line</small>
+                            {% for error in form.ingredients.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.instructions.id_for_label }}" class="form-label fw-bold">
+                                Instructions <span class="text-danger">*</span>
+                            </label>
+                            {{ form.instructions }}
+                            <small class="form-text text-muted">Enter step-by-step cooking instructions</small>
+                            {% for error in form.instructions.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                {{ form.leftover_friendly }}
+                                <label class="form-check-label fw-bold" for="{{ form.leftover_friendly.id_for_label }}">
+                                    This recipe is leftover-friendly
+                                </label>
+                                <br>
+                                <small class="form-text text-muted">Can this recipe use leftover or surplus ingredients?</small>
+                            </div>
+                            {% for error in form.leftover_friendly.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.waste_reduction_tip.id_for_label }}" class="form-label fw-bold">
+                                Waste Reduction Tip
+                            </label>
+                            {{ form.waste_reduction_tip }}
+                            <small class="form-text text-muted">Share how this recipe helps reduce food waste</small>
+                            {% for error in form.waste_reduction_tip.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="alert alert-success" role="alert">
+                            <strong>Thank you for sharing!</strong> Your recipe will inspire others to reduce food waste creatively.
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Share Recipe</button>
+                            <a href="{% url 'recipe_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section-small {
+        background: linear-gradient(135deg, #2e8b57, #3cb371);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+

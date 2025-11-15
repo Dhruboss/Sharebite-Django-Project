@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section-small">
+    <div class="container">
+        <h1 class="display-5">Eco-Friendly Recipes</h1>
+        <p class="lead">Discover creative ways to use leftover food and reduce waste</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Search Recipes</h5>
+                    <form method="GET" action="{% url 'recipe_list' %}">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.query }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form.difficulty }}
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-check mt-2">
+                                    {{ form.leftover_friendly }}
+                                    <label class="form-check-label" for="{{ form.leftover_friendly.id_for_label }}">
+                                        Leftover Friendly
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-success w-100">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3>All Recipes ({{ recipes.count }})</h3>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'recipe_create' %}" class="btn btn-success">Share Your Recipe</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if recipes %}
+            {% for recipe in recipes %}
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card recipe-card h-100 shadow-sm">
+                        {% if recipe.image %}
+                            <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <span class="text-muted fs-1">🍽️</span>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ recipe.title }}</h5>
+                            <p class="card-text text-muted small flex-grow-1">{{ recipe.description|truncatewords:15 }}</p>
+                            
+                            <div class="mb-2">
+                                <span class="badge bg-{% if recipe.difficulty == 'easy' %}success{% elif recipe.difficulty == 'medium' %}warning{% else %}danger{% endif %}">
+                                    {{ recipe.get_difficulty_display }}
+                                </span>
+                                {% if recipe.leftover_friendly %}
+                                    <span class="badge bg-info">Leftover Friendly</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between text-muted small mb-2">
+                                <span>⏱️ {{ recipe.total_time }} min</span>
+                                <span>👁️ {{ recipe.views }} views</span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between text-muted small mb-3">
+                                <span>🍽️ {{ recipe.servings }} servings</span>
+                                <span>By {{ recipe.author.username }}</span>
+                            </div>
+                            
+                            <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-success btn-sm w-100">View Recipe</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    <h4>No recipes found</h4>
+                    <p class="mb-0">Try adjusting your search filters or be the first to share a recipe!</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .hero-section-small {
+        background: linear-gradient(135deg, #2e8b57, #3cb371);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 0;
+    }
+    
+    .recipe-card {
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .recipe-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 20px rgba(46, 139, 87, 0.2);
+    }
+</style>
+{% endblock %}
+
